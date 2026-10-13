@@ -7,7 +7,7 @@ output:
 
 > *"On this position, what characterizes science is not that the methods employed are unique to science, but that the methods are more carefully employed... the greater care in detecting and eliminating sources of error."*
 >
-> — **Hanne Andersen & Brian Hepburn**, summarizing Paul Hoyningen-Huene's *Systematicity: The Nature of Science* (2013), in *"Scientific Method"*, *Stanford Encyclopedia of Philosophy*.
+> — **H. Andersen & B. Hepburn**, summarizing Paul Hoyningen-Huene's *Systematicity: The Nature of Science* (2013), in *"Scientific Method"*, *Stanford Encyclopedia of Philosophy*.
 
 ---
 
@@ -35,6 +35,7 @@ When an empirical claim fails, it breaks at one or more of four distinct levels:
 3. **Tier 3: Instrumental Failure:** A failure in the physical measuring instrument, sensor, or chemical assay that distorts, corrupts, or is blind to the physical signal present. *Lecture Example: Dr. Palmer using standard Gram/H&E tissue stains; the 2011 OPERA loose fiber-optic cable producing faster-than-light neutrinos.*
 4. **Tier 4: Stochastic Failure:** A failure caused purely by random noise (thermodynamical, biological, environmental, and, most commonly, **finite sample variability**), when nobody made a mistake. *Lecture Example: The 2015 CERN 750 GeV bump.*
 
+---
 
 ### Post-Lecture Reflections
 
