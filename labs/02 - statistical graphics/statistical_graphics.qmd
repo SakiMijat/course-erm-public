@@ -153,6 +153,27 @@ ggplot(shots, aes(x = distance)) +
 
 Instead of pre-computing means and standard errors in `dplyr`, we execute parametric summaries directly on the canvas:
 
+
+```{r}
+#| label: fig-stat-summary1
+#| fig-cap: "Direct estimation of cell means and standard errors using stat_summary(mean_se)."
+#| fig-width: 6.5
+#| fig-height: 3.5
+
+ggplot(shots, aes(x = shottype, y = angle, color = shottype)) +
+  # Parametric aggregation: Mean and Standard Error pointrange
+  stat_summary(fun.data = mean_se, geom = "pointrange", 
+               size = 0.4, color = "black", linewidth = 1.1) +
+  scale_color_brewer(palette = "Dark2") +
+  labs(
+    title = "Release Angle by Shot Type (Mean ± SE)",
+    x = "Shot Type",
+    y = "Release Angle (Degrees)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
 ```{r}
 #| label: fig-stat-summary
 #| fig-cap: "Direct estimation of cell means and standard errors using stat_summary(mean_se)."
@@ -185,26 +206,30 @@ A critical pitfall in statistical visualization is confusing **scale limits** wi
 
 ```{r}
 #| label: fig-scale-vs-coord
-#| fig-cap: "Scale limits silently discard rows and alter statistics; Coordinate limits preserve valid underlying data."
+#| fig-cap: "Comparison of zooming techniques: The base plot shows the full data range. Using scale_y_continuous drops data outside the limits and distorts summary statistics (notice how the above head box disappears completely). Using coord_cartesian zooms into the viewport while preserving the true calculated box limits."
 #| fig-width: 8
-#| fig-height: 3.5
+#| fig-height: 6.5
 
+library(patchwork)
+
+# 1. Base Plot (Full Data)
 p_base <- ggplot(shots, aes(x = shottype, y = distance)) +
   geom_boxplot(fill = "grey90", outlier.color = "red") +
+  labs(title = "1. Base Plot (Full Data)") +
   theme_minimal()
 
-# WRONG: Drops points > 3.0m, altering median and box dimensions!
+# 2. WRONG: Drops data points > 3.0m, altering calculations!
 p_wrong <- p_base + 
   scale_y_continuous(limits = c(0, 3)) + 
-  labs(title = "WRONG: scale_y_continuous (Drops Data)")
+  labs(title = "2. WRONG: scale_y (Drops Data)")
 
-# CORRECT: Computes true distribution on all data, then zooms viewport
+# 3. CORRECT: Computes true distribution, then zooms viewport
 p_correct <- p_base + 
   coord_cartesian(ylim = c(0, 3)) + 
-  labs(title = "CORRECT: coord_cartesian (Visual Zoom)")
+  labs(title = "3. CORRECT: coord_cartesian (Visual Zoom)")
 
-p_wrong | p_correct
-
+# Stack Base on top, and place WRONG & CORRECT side-by-side below
+p_base / (p_wrong | p_correct)
 ```
 
 ### Multi-Plot Composition with `patchwork`
