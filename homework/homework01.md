@@ -33,6 +33,7 @@ knitr::kable() for table formatting
 ```
 
 To receive a **PASS** in initial screening:
+
 * The project opens cleanly via `hw-01.Rproj` with no absolute path calls.
 * `.qmd` renders to completion in reasonable time and with zero errors.
 * The generated output is a clean, 1-page PDF document containing the equation, table, and figure.
