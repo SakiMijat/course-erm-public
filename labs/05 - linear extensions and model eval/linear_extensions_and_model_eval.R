@@ -1,6 +1,7 @@
 library(ggplot2)
 library(dplyr)
 library(tidyr)
+library(palmerpenguins)
 
 # FUNCTION 1: LOOCV via Physical Loop
 loocv_loop <- function(model) {
@@ -16,8 +17,8 @@ loocv_loop <- function(model) {
   
   # physical Leave-One-Out loop over all n observations
   for (i in 1:n) {
-    fit_i   <- lm(form, data = data[-i, , drop = FALSE])
-    pred_i  <- predict(fit_i, newdata = data[i, , drop = FALSE])
+    fit_i   <- lm(form, data = data[-i,])
+    pred_i  <- predict(fit_i, newdata = data[i,])
     sigma_i <- summary(fit_i)$sigma
     
     # Pointwise Gaussian log-predictive density (log score)
@@ -26,8 +27,7 @@ loocv_loop <- function(model) {
   
   # Total ELPD (sum of log scores) and its Standard Error (SE) across observations
   elpd    <- sum(pointwise_log_scores)
-  se_elpd <- sqrt(n) * sd(pointwise_log_scores) # 
-  
+
   # NOTE: SE for mean is approximately SD(X) / sqrt(n). But SE for sum is this below.
   # It follows from: SE(SUM) = SE(n * X) = n * SE(X_average) = n * (SD(X) / sqrt(n)) = sqrt(n) * SD(X)
   se_elpd <- sqrt(n) * sd(pointwise_log_scores)
@@ -49,8 +49,8 @@ loocv_shortcut <- function(model) {
   n    <- length(y)
   k    <- length(coef(model)) # Number of beta coefficients
   
-  e <- residuals(model)
-  h <- hatvalues(model)
+  e <- residuals(model) # outlierness
+  h <- hatvalues(model) # leverage
   sse <- sum(e^2)
   
   # Closed-form out-of-sample predictions & residual variances
@@ -90,6 +90,9 @@ penguins_clean <- penguins |>
 
 # Fit standard linear regression model
 fit_penguins <- lm(body_mass_g ~ flipper_length_mm, data = penguins_clean)
+summary(fit_penguins)
+plot(fit_penguins)
+
 
 # Execute all three functions
 res_loop     <- loocv_loop(fit_penguins)
@@ -126,8 +129,10 @@ knitr::kable(
 
 mod_simple  <- lm(body_mass_g ~ flipper_length_mm, data = penguins_clean)
 
-mod_complex <- lm(body_mass_g ~ flipper_length_mm * species + sex + bill_length_mm + island + year + bill_depth_mm, 
+mod_complex <- lm(body_mass_g ~ flipper_length_mm * species + sex * species + island + year + bill_depth_mm + bill_length_mm , 
                   data = penguins_clean)
+
+summary(mod_complex)
 
 # Targeted Pointwise Model Comparison
 res_simple  <- loocv_shortcut(mod_simple)
@@ -179,3 +184,5 @@ print(knitr::kable(tbl_comparison, align = "lcccc"))
 # Model diagnostics. Are all inputs relevant?
 plot(mod_complex)
 summary(mod_complex)
+
+
